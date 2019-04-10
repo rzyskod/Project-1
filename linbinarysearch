@@ -1,0 +1,163 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using System.IO;
+
+namespace Daniel_Rzysko
+
+{
+    class Projekt1
+    {
+        const int Size = 1024 * 1024 * 256 - 1;
+        static int[] Tab;
+        static long Steps;
+
+        // wyszukiwanie liniowe
+
+        static int WyszukiwanieLiniowe(int N, int Number)
+        {
+            for (int i = 0; i < N; i++)
+            {
+                Steps++;
+                if (Tab[i] == Number) return i;
+            }
+            return -1;
+        }
+
+        static void LiniowePesymistyczne()
+        {
+            Stopwatch Stoper = new Stopwatch();
+            StreamWriter file = new StreamWriter("LiniowePesymistyczne.txt");
+            for (int i = 100; i <= 200; i += 10)
+            {
+                int n = i * 100;
+                Steps = 0;
+
+                Stoper.Start();
+                WyszukiwanieLiniowe(n, 0);
+                Stoper.Stop();
+
+                file.WriteLine("{0}; {1}; {2}; {3}", i, n, Steps, Stoper.ElapsedMilliseconds);
+                Console.WriteLine("{0}; {1}; {2}; {3}", i, n, Steps, Stoper.ElapsedMilliseconds);
+                Stoper.Reset();
+            }
+            file.Close();
+        }
+
+        static void Liniowe()
+        {
+            Stopwatch Stoper = new Stopwatch();
+            StreamWriter file = new StreamWriter("Liniowe.txt");
+            for (int i = 100; i <= 200; i += 10)
+            {
+                int n = i * 100;
+                Steps = 0;
+
+                Stoper.Start();
+                for (int j = 0; j < n; j++)
+                {
+                    WyszukiwanieLiniowe(n, Tab[j]);
+                }
+                Stoper.Stop();
+
+                file.WriteLine("{0}; {1}; {2}; {3}", i, n, ((double)Steps) / n, Stoper.ElapsedMilliseconds);
+                Console.WriteLine("{0}; {1}; {2}; {3}", i, n, ((double)Steps) / n, Stoper.ElapsedMilliseconds);
+                Stoper.Reset();
+            }
+            file.Close();
+        }
+
+        // wyszukiwanie binarne
+
+        static int BinarySearch(int N, int Number)
+        {
+            int Left = 0;
+            int Right = N - 1;
+            int Middle;
+            while (Left <= Right)
+            {
+                Steps++;
+                Middle = (Left + Right) >> 1;
+
+                if (Tab[Middle] == Number) return Middle;
+                else if (Tab[Middle] > Number) Right = Middle - 1;
+                else Left = Middle + 1;
+            }
+            return -1;
+        }
+
+        static void BinarnePesymistyczne()
+        {
+            Stopwatch Stoper = new Stopwatch();
+            StreamWriter file = new StreamWriter("BinarnePesymistyczne.txt");
+            for (int i = 10; i <= 20; i++)
+            {
+                int n = (1 << i) - 1;
+                Steps = 0;
+
+                Stoper.Start();
+                BinarySearch(n, 0);
+                Stoper.Stop();
+
+                file.WriteLine("{0}; {1}; {2}; {3}", i, n, Steps, Stoper.ElapsedMilliseconds);
+                Console.WriteLine("{0}; {1}; {2}; {3}", i, n, Steps, Stoper.ElapsedMilliseconds);
+                Stoper.Reset();
+            }
+            file.Close();
+        }
+
+        static void Binarne()
+        {
+            Stopwatch Stoper = new Stopwatch();
+            StreamWriter file = new StreamWriter("Binarne.txt");
+            for (int i = 10; i <= 20; i++)
+            {
+                int n = (1 << i) - 1;
+                Steps = 0;
+
+                Stoper.Start();
+                for (int j = 0; j < n; j++)
+                {
+                    BinarySearch(n, Tab[j]);
+                }
+                Stoper.Stop();
+
+                file.WriteLine("{0}; {1}; {2}; {3}", i, n, ((double)Steps) / n, Stoper.ElapsedMilliseconds);
+                Console.WriteLine("{0}; {1}; {2}; {3}", i, n, ((double)Steps) / n, Stoper.ElapsedMilliseconds);
+                Stoper.Reset();
+            }
+            file.Close();
+        }
+
+
+
+        static void Main()
+        {
+            Tab = new int[Size];
+            for (int i = 0; i < Size; i++) Tab[i] = i + 1;
+            Console.WriteLine("Start programu...");
+
+            Console.WriteLine();
+            Console.WriteLine("LiniowePesymistyczne:");
+            LiniowePesymistyczne();
+
+            Console.WriteLine();
+            Console.WriteLine("Liniowe:");
+            Liniowe();
+
+            Console.WriteLine();
+            Console.WriteLine("BinarnePesymistyczne:");
+            BinarnePesymistyczne();
+
+            Console.WriteLine();
+            Console.WriteLine("Binarne:");
+            Binarne();
+
+            Console.ReadKey();
+        }
+    }
+}
+
